@@ -1,5 +1,5 @@
 import argparse
-import openai
+from openai import OpenAI
 import os
 
 # Initialize parser
@@ -16,6 +16,10 @@ parser.add_argument('output_folder', type=str, help='Output folder path')
 # Parse arguments
 args = parser.parse_args()
 
+# OpenAI API key setup (replace YOUR_API_KEY with your actual OpenAI API key)
+openai_api_key = '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'
+client = OpenAI(api_key=openai_api_key)
+
 # Function to read file content
 def read_file(file_path):
     with open(file_path, 'r') as file:
@@ -28,15 +32,14 @@ llm_prompt = read_file(args.llm_prompt_file)
 # Prepare the prompt for the API
 full_prompt = f"{llm_prompt}\n\nCUDA Version: {args.cuda_version}\nOptimization Level: {args.optimization_level}\n\n{cuda_code}"
 
-# OpenAI API key setup (replace YOUR_API_KEY with your actual OpenAI API key)
-openai.api_key = 'YOUR_API_KEY'
+
 
 # Call OpenAI API to optimize the CUDA code
 try:
-    response = openai.Completion.create(
+    response = client.chat.completions.create(
         engine=args.model_name,
         prompt=full_prompt,
-        temperature=0.7,
+        temperature=0,
         max_tokens=2048
     )
     
