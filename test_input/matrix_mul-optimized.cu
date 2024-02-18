@@ -2,57 +2,30 @@
 #include <stdio.h>
 
 #define TILE_WIDTH 32
-#define WARP_SIZE 32
-#define K 8 // Loop unrolling factor
 
 __global__ void matrixMulOptimized(float *A, float *B, float *C, int N) {
-    __shared__ float sA[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float sB[TILE_WIDTH][TILE_WIDTH];
+    __shared__ float s_A[TILE_WIDTH][TILE_WIDTH];
+    __shared__ float s_B[TILE_WIDTH][TILE_WIDTH];
 
     int bx = blockIdx.x, by = blockIdx.y;
     int tx = threadIdx.x, ty = threadIdx.y;
 
-    // Identify the row and column of the C element to work on
-    int Row = by * TILE_WIDTH + ty;
-    int Col = bx * TILE_WIDTH + tx;
+    int row = by * TILE_WIDTH + ty;
+    int col = bx * TILE_WIDTH + tx;
+    float sum = 0.0f;
 
-    float CValue = 0;
-
-    // Loop over the A and B tiles required to compute the C element
-    for (int ph = 0; ph < ceilf(N / (float)TILE_WIDTH); ++ph) {
-        // Collaborative loading of A and B tiles into shared memory
-        if (Row < N && ph*TILE_WIDTH+tx < N)
-            sA[ty][tx] = A[Row*N + ph*TILE_WIDTH+tx];
-        else
-            sA[ty][tx] = 0.0;
-
-        if (Col < N && ph*TILE_WIDTH+ty < N)
-            sB[ty][tx] = B[(ph*TILE_WIDTH+ty)*N + Col];
-        else
-            sB[ty][tx] = 0.0;
-
+    for (int m = 0; m < (N / TILE_WIDTH); ++m) {
+        s_A[ty][tx] = A[row * N + m * TILE_WIDTH + tx];
+        s_B[ty][tx] = B[(m * TILE_WIDTH + ty) * N + col];
         __syncthreads();
 
-        // Computation loop unrolled
         #pragma unroll
-        for (int k = 0; k < TILE_WIDTH; k += K) {
-            CValue += sA[ty][k] * sB[k][tx];
-            // Include further unrolled computations
-            CValue += sA[ty][k] * sB[k][tx];
-            CValue += sA[ty][k+1] * sB[k+1][tx];
-            CValue += sA[ty][k+2] * sB[k+2][tx];
-            CValue += sA[ty][k+3] * sB[k+3][tx];
-            CValue += sA[ty][k+4] * sB[k+4][tx];
-            CValue += sA[ty][k+5] * sB[k+5][tx];
-            CValue += sA[ty][k+6] * sB[k+6][tx];
-            CValue += sA[ty][k+7] * sB[k+7][tx];
+        for (int k = 0; k < TILE_WIDTH; ++k) {
+            sum += s_A[ty][k] * s_B[k][tx];
         }
-
         __syncthreads();
     }
-
-    if (Row < N && Col < N)
-        C[Row*N + Col] = CValue;
+    if(row < N && col < N) C[row * N + col] = sum;
 }
 
 int main() {

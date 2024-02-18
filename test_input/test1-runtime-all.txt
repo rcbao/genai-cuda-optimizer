@@ -1,0 +1,48 @@
+cb5th@gpusrv08:~/cs-6501-modern-comp-arch/cs-6501-llm-cuda-optimizer/test_input$ ./test1-optimized 
+N 4480 C[0][0] 0
+140 0.173343s
+N 4512 C[0][0] 0
+141 0.177086s
+N 4544 C[0][0] 0
+142 0.178453s
+N 4576 C[0][0] 0
+143 0.179154s
+N 4608 C[0][0] 0
+144 0.190265s
+N 4640 C[0][0] 0
+145 0.186335s
+N 4672 C[0][0] 0
+146 0.188062s
+N 4704 C[0][0] 0
+147 0.190152s
+N 4736 C[0][0] 0
+148 0.192507s
+N 4768 C[0][0] 0
+149 0.196528s
+cb5th@gpusrv08:~/cs-6501-modern-comp-arch/cs-6501-llm-cuda-optimizer/test_input$ ./test1
+N 4480 C[0][0] 0
+140 0.42697s
+N 4512 C[0][0] 0
+141 0.167286s
+N 4544 C[0][0] 0
+142 0.169895s
+N 4576 C[0][0] 0
+143 0.172288s
+N 4608 C[0][0] 0
+144 0.180654s
+N 4640 C[0][0] 0
+145 0.178015s
+N 4672 C[0][0] 0
+146 0.181063s
+N 4704 C[0][0] 0
+147 0.18024s
+N 4736 C[0][0] 0
+148 0.183821s
+N 4768 C[0][0] 0
+149 0.186155s
+
+
+Summary: 
+- The GPT-4-turbo optimized version: 3.171852s
+- Original: 4.054258s
+- The GPT-4-turbo optimized version is 27.82% faster than the original (written in 2015)

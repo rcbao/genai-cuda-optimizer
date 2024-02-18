@@ -40,7 +40,6 @@ int main() {
     cudaMemcpy(d_A, A, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
 
-    // Launch the kernel with a single thread per block for maximum inefficiency
     dim3 threadsPerBlock(1, 1);
     dim3 blocksPerGrid((N + threadsPerBlock.x - 1) / threadsPerBlock.x, 
                        (N + threadsPerBlock.y - 1) / threadsPerBlock.y);
