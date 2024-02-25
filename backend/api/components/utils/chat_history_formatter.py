@@ -1,5 +1,5 @@
 from llama_index.core.llms import ChatMessage
-from ..data_structures import OpenAIInput
+from ..data_structures import OpenAIMessage
 
 
 class ChatHistoryFormatter:
@@ -27,7 +27,7 @@ class ChatHistoryFormatter:
 
     @staticmethod
     def append_user_message_to_history(user_message, chat_history):
-        followup_input = OpenAIInput("user", user_message)
+        followup_input = OpenAIMessage("user", user_message)
         followup_message = vars(followup_input)
         chat_history.append(followup_message)
 

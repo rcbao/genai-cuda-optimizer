@@ -8,4 +8,4 @@ You are given the following information for the task:
 ## Guidelines for optimization
 (1) Optimize the code to improve performance. (For example, by applying best practices, refactoring inefficient sections, and using compatible CUDA features.)
 (2) Ensure compatibility with the specified CUDA version.
-(3) On top of the performance-oriented optimization, take into account of the optimization priority.
+(3) On top of the performance-based optimization, take into account of the stated priority.

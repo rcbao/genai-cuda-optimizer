@@ -1,30 +1,42 @@
+import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import OptimizationTaskSerializer
+from .components.openai_connector import OpenaiConnector
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+
+def return_internal_server_error():
+    error_response = {"error": "Internal Server Error"}
+    error_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    return Response(error_response, status=error_code)
 
 
 class OptimizeCUDAView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = OptimizationTaskSerializer(data=request.data)
-        if serializer.is_valid():
-            cuda_code = serializer.validated_data["cuda_code"]
-            cuda_version = serializer.validated_data["cuda_version"]
-            optimization_level = serializer.validated_data["optimization_level"]
+        serializer.is_valid(raise_exception=True)
 
-            # Process optimization (simplified example)
-            optimized_code = self.process_optimization(
-                cuda_code, cuda_version, optimization_level
-            )
+        if not serializer or not serializer.validated_data:
+            return return_internal_server_error()
 
-            return Response(
-                {"optimized_cuda_code": optimized_code}, status=status.HTTP_200_OK
-            )
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        code = serializer.validated_data["code"]
+        version = serializer.validated_data["version"]
+        optimization_level = serializer.validated_data["level"]
 
-    def process_optimization(self, cuda_code, cuda_version, optimization_level):
-        # Placeholder for the logic to prepare and send optimization request to OpenAI API
-        # This would involve setting up the request with appropriate context and instructions
-        # based on the optimization level and CUDA version. The following is a mock response.
-        return f"Optimized CUDA Code for version {cuda_version} at level {optimization_level}"
+        try:
+            # Build the initial prompt using OpeningPromptBuilder
+            connector = OpenaiConnector(openai_api_key)
+            response = connector.create_newchat(code, version, optimization_level)
+
+            return Response(response, status=status.HTTP_200_OK)
+
+        except ValueError as ve:
+            return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return return_internal_server_error()
