@@ -2,13 +2,13 @@ Please optimize the following CUDA code for maximum performance while ensuring c
 
 - CUDA Code:
 ```cuda
-{cuda_code}
+{code}
 ```
 
 - CUDA Version Compatibility:
-Latest
+{version}
 
 - Optimization Level:
-{optimization_level}
+{level}
 
 Optimize the code by applying best practices, refactoring inefficient sections, and utilizing CUDA features that are compatible with the specified version. Consider the optimization level as a guide for balancing code performance against readability and maintainability. Provide the optimized CUDA code below.
