@@ -23,6 +23,7 @@ class OptimizeCUDAView(APIView):
         serializer.is_valid(raise_exception=True)
 
         if not serializer or not serializer.validated_data:
+            print("Invalid serializer")
             return return_internal_server_error()
 
         code = serializer.validated_data["code"]
@@ -30,7 +31,6 @@ class OptimizeCUDAView(APIView):
         optimization_level = serializer.validated_data["level"]
 
         try:
-            # Build the initial prompt using OpeningPromptBuilder
             connector = OpenaiConnector(openai_api_key)
             response = connector.create_newchat(code, version, optimization_level)
 
@@ -39,4 +39,5 @@ class OptimizeCUDAView(APIView):
         except ValueError as ve:
             return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            print(e)
             return return_internal_server_error()

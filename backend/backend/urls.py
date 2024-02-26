@@ -21,5 +21,5 @@ from api.views import OptimizeCUDAView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("new-optimization/", OptimizeCUDAView.as_view(), name="new-chat"),
+    path("new-optimization/", OptimizeCUDAView.as_view(), name="new-optimization"),
 ]

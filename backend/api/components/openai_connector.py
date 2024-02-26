@@ -11,8 +11,12 @@ class OpenaiConnector:
         self.prompt_builder = PromptBuilder()
         self.runner = GPTRunner(self.client)
 
-    def create_newchat(self, code: str, version: str, level: int):
-        messages = self.prompt_builder.build_newchat_messages(code, version, level)
+    def get_priority_statement_from_level(self, level):
+        return "Fastest run times possibly at the expense of code readability and maintainability"
+
+    def create_newchat(self, code: str, version: str, level: str):
+        priority = self.get_priority_statement_from_level(level)
+        messages = self.prompt_builder.build_newchat_messages(code, version, priority)
         try:
             res = self.runner.get_gpt_response_from_messages(messages)
             return res
