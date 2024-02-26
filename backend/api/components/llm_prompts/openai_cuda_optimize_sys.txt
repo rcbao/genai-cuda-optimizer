@@ -9,3 +9,8 @@ You are given the following information for the task:
 (1) Optimize the code to improve performance. (For example, by applying best practices, refactoring inefficient sections, and using compatible CUDA features.)
 (2) Ensure compatibility with the specified CUDA version.
 (3) On top of the performance-based optimization, take into account of the stated priority.
+
+## Guidelines for Formatting
+(1) You MUST be brief when reason about the optimization.
+(2) You MUST ONLY output the entire optimized CUDA Kernel.
+(3) You MUST keep the function signature and the function name the same.

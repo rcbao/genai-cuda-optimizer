@@ -1,14 +1,8 @@
 import re
-import json
-from llama_index.core.chat_engine import (
-    CondensePlusContextChatEngine,
-)
-from llama_index.core import PromptTemplate
 from .file_handler import FileHandler
 from .chat_history_formatter import ChatHistoryFormatter
 from .prompt_builder import PromptBuilder
-from ..constants import prompt_paths, OPENAI_MODEL, OPENAI_MAX_TOKENS
-from llama_index.core.chat_engine.types import AgentChatResponse
+from ..constants import OPENAI_MODEL, OPENAI_MAX_TOKENS
 from ..data_structures import OpenAIMessage
 
 
@@ -34,9 +28,22 @@ class GPTRunner:
         gpt_response = response.choices[0].message.content
         return gpt_response
 
+    def extract_cuda_code(self, markdown_str: str) -> str:
+        # Regular expression to find code block marked with ```cuda
+        pattern = r"```cuda\n(.*?)```"
+        match = re.search(pattern, markdown_str, re.DOTALL)
+        if match:
+            return match.group(1)
+        else:
+            return None
+
     def get_gpt_response_from_messages(self, messages: list):
         response = self.get_gpt_response(messages)
+        print(response)
+        response = self.extract_cuda_code(response)
 
-        response = OpenAIMessage("assistant", response)
-
-        return vars(response)
+        if response:
+            response = OpenAIMessage("assistant", response)
+            return vars(response)
+        else:
+            raise ValueError("No CUDA code response from OpenAI model.")

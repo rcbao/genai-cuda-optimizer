@@ -12,6 +12,7 @@ class OpenaiConnector:
         self.runner = GPTRunner(self.client)
 
     def get_priority_statement_from_level(self, level):
+        # TODO: fill in with an actual implementation
         return "Fastest run times possibly at the expense of code readability and maintainability"
 
     def create_newchat(self, code: str, version: str, level: str):
