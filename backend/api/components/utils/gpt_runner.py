@@ -6,10 +6,6 @@ from ..constants import OPENAI_MODEL, OPENAI_MAX_TOKENS
 from ..data_structures import OpenAIMessage
 
 
-SHOWING_ONLY_ONE_CONTEXT = True
-RAG_DISABLED = False
-
-
 class GPTRunner:
     def __init__(self, client):
         self.client = client
@@ -39,10 +35,10 @@ class GPTRunner:
 
     def get_gpt_response_from_messages(self, messages: list):
         response = self.get_gpt_response(messages)
-        print(response)
         response = self.extract_cuda_code(response)
 
         if response:
+            print(response)
             response = OpenAIMessage("assistant", response)
             return vars(response)
         else:
