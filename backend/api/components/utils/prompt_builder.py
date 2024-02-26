@@ -1,4 +1,3 @@
-from api.models import Assignment
 from .file_handler import FileHandler
 from ..constants import prompt_paths
 
