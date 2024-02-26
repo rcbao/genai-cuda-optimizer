@@ -10,4 +10,4 @@ prompt_paths = {
 }
 
 OPENAI_MODEL = "gpt-4-turbo-preview"
-OPENAI_MAX_TOKENS = 4000
+OPENAI_MAX_TOKENS = 2048
