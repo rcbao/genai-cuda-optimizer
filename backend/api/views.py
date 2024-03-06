@@ -6,6 +6,9 @@ from .serializers import OptimizationTaskSerializer
 from .components.openai_connector import OpenaiConnector
 from dotenv import load_dotenv
 
+from django.views import generic
+from api.models import Settings, CodeComparison
+
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -41,3 +44,11 @@ class OptimizeCUDAView(APIView):
         except Exception as e:
             print(e)
             return return_internal_server_error()
+
+class SettingsView(generic.ListView):
+    model = Settings
+    template_name = "cuda_optimizers/templates/settings.html"
+
+class CodeComparisonView(generic.ListView):
+    model = 
+    template_name = "cuda_optimizers/templates/settings.html"
