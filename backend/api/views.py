@@ -59,5 +59,5 @@ class CodeComparisonView(generic.ListView):
 
 # METHODS
     
-def optimize_code():
+def optimize_code(request):
     return HttpResponseRedirect(reverse("code_comparison"))
