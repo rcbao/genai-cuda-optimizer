@@ -24,5 +24,6 @@ urlpatterns = [
     path("new-optimization/", OptimizeCUDAView.as_view(), name="new-optimization"),
     path("settings/", SettingsView.as_view(), name="settings"),
     path("code_comparison/", CodeComparisonView.as_view(), name="code_comparison"),
-    path("optimize_code/", views.optimize_code, name="optimize_code")
+    path("optimize_code/", views.optimize_code, name="optimize_code"),
+    path("back/", views.back, name="back")
 ]
