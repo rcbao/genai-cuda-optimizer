@@ -60,7 +60,6 @@ class CodeComparisonView(generic.ListView):
 # METHODS
     
 def optimize_code(request):
-<<<<<<< Updated upstream
     # get POST request data
     req_speed = request.POST['speed_rating']
     req_memory = request.POST['memory_rating']
@@ -83,9 +82,6 @@ def optimize_code(request):
     settings_object.save()
 
     return HttpResponseRedirect(reverse("code_comparison"))
-=======
-    return HttpResponseRedirect(reverse("code_comparison"))
 
 def back(request):
     return HttpResponseRedirect(reverse("settings"))
->>>>>>> Stashed changes
