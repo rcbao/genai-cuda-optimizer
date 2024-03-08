@@ -17,9 +17,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from api.views import OptimizeCUDAView
+from api.views import *
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("new-optimization/", OptimizeCUDAView.as_view(), name="new-optimization"),
+    path("settings/", SettingsView.as_view(), name="settings"),
+    path("code_comparison/", CodeComparisonView.as_view(), name="code_comparison"),
+    path("optimize_code/", views.optimize_code, name="optimize_code")
 ]

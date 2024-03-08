@@ -7,6 +7,10 @@ name = "pypi"
 djangorestframework = "*"
 django = "*"
 python-dotenv = "*"
+openai = "*"
+llama-index = "*"
+django-forms-bootstrap = "*"
+django-bootstrap5 = "*"
 
 [dev-packages]
 

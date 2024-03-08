@@ -7,7 +7,11 @@ from .components.openai_connector import OpenaiConnector
 from dotenv import load_dotenv
 
 from django.views import generic
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.urls import reverse
 from api.models import Settings, CodeComparison
+
+from . import views
 
 load_dotenv()
 
@@ -47,8 +51,13 @@ class OptimizeCUDAView(APIView):
 
 class SettingsView(generic.ListView):
     model = Settings
-    template_name = "cuda_optimizers/templates/settings.html"
+    template_name = "settings.html"
 
 class CodeComparisonView(generic.ListView):
-    model = 
-    template_name = "cuda_optimizers/templates/settings.html"
+    model = CodeComparison
+    template_name = "code_comparison.html"
+
+# METHODS
+    
+def optimize_code():
+    return HttpResponseRedirect(reverse("code_comparison"))
