@@ -16,6 +16,21 @@
     <div class="m-3" style="min-height:300px;">
       <form action="{% url 'optimize_code' %}" method="post">
         {% csrf_token %}
+      
+        <div class="container">
+          <div class="row" style="padding:2vw"> 
+            <div class="col-sm">
+                <p>CUDA Version</p>
+            </div>
+            <div class="col-sm">
+              <div class="settings-field">
+                <input type="text" class="form-control" name="CUDA_version" id="CUDA_version" value="{{ CUDA_version.text }}"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="container">
           <div class="row" style="padding:2vw"> 
             <div class="col-sm">
@@ -24,46 +39,6 @@
             <div class="col-sm">
               <div class="settings-field">
                 <select name="speed_rating" id="speed_rating" class="form-select">
-                  <option id="rating" value="0">0</option>
-                  <option id="rating" value="1"> 1 </option>
-                  <option id="rating" value="2"> 2 </option>
-                  <option id="rating" value="3"> 3 </option>
-                  <option id="rating" value="4"> 4 </option>
-                  <option id="rating" value="5"> 5 </option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="container">
-          <div class="row" style="padding:2vw"> 
-            <div class="col-sm">
-                <p>Memory</p>
-            </div>
-            <div class="col-sm">
-              <div class="settings-field">
-                <select name="memory_rating" id="memory_rating" class="form-select">
-                  <option id="rating" value="0">0</option>
-                  <option id="rating" value="1"> 1 </option>
-                  <option id="rating" value="2"> 2 </option>
-                  <option id="rating" value="3"> 3 </option>
-                  <option id="rating" value="4"> 4 </option>
-                  <option id="rating" value="5"> 5 </option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="container">
-          <div class="row" style="padding:2vw"> 
-            <div class="col-sm">
-                <p>Security/Vulnerabilities</p>
-            </div>
-            <div class="col-sm">
-              <div class="settings-field">
-                <select name="security_rating" id="security_rating" class="form-select">
                   <option id="rating" value="0">0</option>
                   <option id="rating" value="1"> 1 </option>
                   <option id="rating" value="2"> 2 </option>

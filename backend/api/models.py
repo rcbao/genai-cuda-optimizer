@@ -14,8 +14,6 @@ class Settings(models.Model):
     #TODO create fields for each setting 
     # ex. speed, memory
     speed = models.IntegerField()
-    memory = models.IntegerField()
-    security = models.IntegerField()
     readability = models.IntegerField()
     code = models.ForeignKey(Code, on_delete=models.CASCADE)
 
