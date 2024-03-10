@@ -2,7 +2,7 @@ from openai import OpenAI
 from .utils.chat_history_formatter import ChatHistoryFormatter
 from .utils.gpt_runner import GPTRunner
 from .utils.prompt_builder import PromptBuilder
-from .constants import optimization_priorities
+from .constants import performance_priorities, readability_priorities
 
 
 class OpenaiConnector:
@@ -12,15 +12,18 @@ class OpenaiConnector:
         self.prompt_builder = PromptBuilder()
         self.runner = GPTRunner(self.client)
 
-    def get_priority_statement_from_level(self, level: int):
-        if level in optimization_priorities:
-            return optimization_priorities[level]
+    def get_priority_statement_from_level(self, performance: int, readablity: int):
+        performance_valid = performance in performance_priorities
+        readability_valid = readablity in readability_priorities
 
-        error = f"Invalid optimization level: {level}. The value can be 1, 2, or 3."
+        if performance_valid and readability_valid:
+            return f"{performance_priorities[performance]} {readability_priorities[readablity]}"
+
+        error = f"Invalid optimization level. The value can be 1, 2, or 3."
         raise ValueError(error)
 
-    def create_newchat(self, code: str, version: str, level: str):
-        priority = self.get_priority_statement_from_level(level)
+    def create_newchat(self, code, version: str, performance: int, readablity: int):
+        priority = self.get_priority_statement_from_level(performance, readablity)
         messages = self.prompt_builder.build_newchat_messages(code, version, priority)
         try:
             res = self.runner.get_gpt_response_from_messages(code, messages)
