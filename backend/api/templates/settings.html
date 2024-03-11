@@ -72,13 +72,17 @@
           placeholder="insert code here" rows="15"></textarea>
       </div>
 
-      <div class="d-flex justify-content-center align-items-end">
-        <input id="submit_btn" class="align-text-bottom btn btn-primary" id="submit_btn" type="submit" value="Optimize">
+          <div class="d-flex justify-content-center align-items-end">
+            <input id="submit_btn" class="align-text-bottom btn btn-primary" id="submit_btn" type="submit" value="Optimize"
+            />
+          </div>
+        </div>
+      </form>
+      <div class = "loading-screen">
+        <div class="loader"></div>
       </div>
-  </div>
-  </form>
-  </div>
-  <!-- <footer class="bg-light text-center fixed-bottom pt-1">
+    </div>
+    <!-- <footer class="bg-light text-center fixed-bottom pt-1">
       <div class="container">
           <p class="mb-0">CUDA Optimizer</p>
           <p class="text-muted">Candace, Kaylee, and Robert</p>
@@ -86,8 +90,13 @@
     </footer> -->
 </body>
 <script>
-  $(document).ready(function () {
+  $(document).ready(function() {
+    $(".loading-screen").css("display", "none");
 
+    $("#submit_btn").click(function(){
+      console.log("submit clicked");
+      $(".loading-screen").css("display", "block");
+    });
   });
 </script>
 
