@@ -41,7 +41,7 @@ class GPTRunner:
         match = re.search(pattern, markdown_str, re.DOTALL)
         if match:
             res = match.group(1)
-            print(res)
+            print("res: ", res)
             return res
         else:
             return None

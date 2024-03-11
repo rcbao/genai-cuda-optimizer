@@ -19,7 +19,10 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 
-def return_internal_server_error():
+def return_internal_server_error(error = None):
+    if error:
+        print("return_internal_server_error: ")
+        print("error: ", str(error))
     error_response = {"error": "Internal Server Error"}
     error_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     return Response(error_response, status=error_code)
@@ -48,7 +51,7 @@ class OptimizeCUDAView(APIView):
             return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return return_internal_server_error()
+            return return_internal_server_error(e)
 
 class SettingsView(generic.ListView):
     model = Settings
@@ -60,41 +63,46 @@ class CodeComparisonView(generic.ListView):
 
 # METHODS
     
-def call_api(code, version, optimization_level):
+def call_api(code, version, performance, readability):
     try:
+        print("opening connector::")
         connector = OpenaiConnector(openai_api_key)
-        response = connector.create_newchat(code, version, optimization_level)
-
-        return Response(response, status=status.HTTP_200_OK)
+        print("got connector")
+        response = connector.create_newchat(code, version, performance, readability)
+        print("response:: ")
+        print(response)
+        return Response(response, status=status.HTTP_200_OK).data
 
     except ValueError as ve:
         return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        print("an error happened")
         print(e)
         return return_internal_server_error()
     
 def optimize_code(request):
-    # get POST request data
-    req_CUDA_version = request.POST['CUDA_version']
-    req_speed = request.POST['speed_rating']
-    #req_readability = request.POST['readability_rating']
-    req_code = request.POST['original_code']
+    try:
+        # get POST request data
+        req_CUDA_version = request.POST['CUDA_version']
+        req_speed = request.POST['speed_rating']
+        req_readability = request.POST['readability_rating']
+        req_code = request.POST['original_code']
+        response = call_api(req_code, req_CUDA_version, req_speed, req_readability)
+        print(response)
 
-    response = call_api(req_code, req_CUDA_version, req_speed)
-
-    # # create Code database object and set original code  
-    # code_object = Code() 
-    # code_object.original_code = req_code
-    # code_object.save()
-
-    # # create Settings database object and set data
-    # settings_object = Settings()
-    # settings_object.speed = req_speed
-    # settings_object.readability = req_readability
-    # settings_object.code = code_object
-    # settings_object.save()
-
-    return render(request, "code_comparison", {"original_code": req_code, "optimized_code": response.content})
+        if 'error' in response:
+            return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("response.data::")
+            print(str(response))
+            print(response['content'])
+            optimized_code = response['content']  # Assuming response is a Django HttpResponse object
+            return render(request, 'code_comparison.html', {"original_code": req_code, "optimized_code": optimized_code})
+    
+    except KeyError as e:
+        return JsonResponse({"error": f"Missing parameter: {e}"}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def back(request):
     return HttpResponseRedirect(reverse("settings"))
