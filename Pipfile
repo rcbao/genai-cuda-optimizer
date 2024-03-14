@@ -8,7 +8,7 @@ djangorestframework = "*"
 django = "*"
 python-dotenv = "*"
 openai = "*"
-llama-index = "*"
+llama-index-core = "*"
 django-forms-bootstrap = "*"
 django-bootstrap5 = "*"
 
