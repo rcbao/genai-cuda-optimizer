@@ -11,5 +11,5 @@ You are given the following information for the task:
 (3) Take into account of the stated priority in the request.
 
 ## Guidelines for Formatting ##
-(1) You MUST ONLY output the entire optimized CUDA Kernel.
+(1) You MUST ONLY output the entire set of optimized CUDA kernels.
 (2) You MUST keep the function signature and the function name the same.

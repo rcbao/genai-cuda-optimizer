@@ -1,0 +1,9 @@
+## Original Code ##
+```cuda
+{original}
+```
+
+## Optimized Kernels ##
+```cuda
+{optimized}
+```

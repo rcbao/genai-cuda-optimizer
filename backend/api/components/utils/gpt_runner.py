@@ -1,14 +1,22 @@
 import re
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
+
 from .file_handler import FileHandler
 from .chat_history_formatter import ChatHistoryFormatter
 from .prompt_builder import PromptBuilder
 from ..constants import OPENAI_MODEL, OPENAI_MAX_TOKENS
 from ..data_structures import OpenAIMessage
 
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
 
 class GPTRunner:
-    def __init__(self, client):
-        self.client = client
+    def __init__(self):
+        self.client = OpenAI(api_key=openai_api_key)
         self.file_handler = FileHandler()
         self.formatter = ChatHistoryFormatter()
         self.prompt_builder = PromptBuilder()
@@ -80,21 +88,12 @@ class GPTRunner:
 
         return new_program
 
-    def get_gpt_response_from_messages(self, original_code: str, messages: list):
-        llm_response = self.get_gpt_response(messages)
-        optimized_code = self.get_cuda_code_from_markdown(llm_response)
-
-        codes = [original_code, optimized_code]
-        signatures = self.get_shared_cuda_kernel_signatures(codes)
-
-        response = ""
-
-        for s in signatures:
-            swap_source = response if response else optimized_code
-            response = self.swap_cuda_kernel(original_code, swap_source, s)
+    def get_gpt_response_from_messages(self, messages: list):
+        response = self.get_gpt_response(messages)
+        print("response:: ", response)
 
         if response:
-            response = OpenAIMessage("assistant", response)
-            return vars(response)
+            message = OpenAIMessage("assistant", response)
+            return vars(message)
         else:
             raise ValueError("No CUDA code response from OpenAI model.")

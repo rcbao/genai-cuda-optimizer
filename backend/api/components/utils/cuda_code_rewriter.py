@@ -1,4 +1,6 @@
 import re
+from .gpt_runner import GPTRunner
+from .prompt_builder import PromptBuilder
 
 
 class MarkdownCudaCodeParser:
@@ -20,7 +22,7 @@ class SignatureDiff:
 
         self.results = self.diff_kernel_signatures_from_code()
 
-    def extract_kernel_signatures_from_code(self, code: str) -> list[str]:
+    def extract_kernel_signatures_from_code(self, code: str) -> set[str]:
         # Extract CUDA kernel signatures from a given text
         cuda_pattern = r"__global__\s+void\s+[a-zA-Z_]\w*\s*\([^)]*\)"
         results = re.findall(cuda_pattern, code)
@@ -86,68 +88,21 @@ class CudaCodeRewriter:
         self.original = original_code
 
         self.optimized = MarkdownCudaCodeParser(llm_response).code
-        self.kernel_diff = SignatureDiff(original_code, self.optimized).results()
+        self.kernel_diff = SignatureDiff(original_code, self.optimized).results
 
         # set the rewritten code to the original code initially
         self.result = original_code
+        self.runner = GPTRunner()
+        self.prompt_builder = PromptBuilder()
 
-    def add_new_imports_and_globals(self) -> str:
-        merger = CudaImportAndGlobalMerger()
-        self.result = merger.add_new_imports_and_globals(self.result, self.optimized)
-
-    def swap_shared_cuda_kernels(self):
-
-        shared_kernels = self.kernel_diff["new"]
-
-        for signature in shared_kernels:
-            # Escape special characters in the signature for regex usage.
-            escaped_signature = re.escape(signature)
-
-            # Define regex pattern to find the kernel body.
-            # This pattern assumes that the kernel body is enclosed in braces {}.
-            pattern = rf"{escaped_signature}\s*\{{(.*?)\}}"
-
-            # Find the kernel body in the optimized code.
-            optimized_kernel_match = re.search(pattern, self.optimized, re.DOTALL)
-            if optimized_kernel_match:
-                optimized_kernel_body = optimized_kernel_match.group(1)
-
-                # Replace the kernel body in the original code with the optimized one.
-                # It assumes that the same kernel signature will not appear more than once in the original code.
-                repl = rf"{signature} {{{optimized_kernel_body}}}"
-                self.result = re.sub(pattern, repl, self.result, count=1)
-
-    def add_new_cuda_kernels(self) -> str:
-        new_kernels = []
-
-        # Extract new kernels from the optimized code.
-        for signature in self.kernel_diff["new"]:
-            pattern = re.escape(signature) + r"\s*\{.*?\}\s*"
-            match = re.search(pattern, self.optimized, re.DOTALL)
-            if match:
-                # Trim leading/trailing whitespace to ensure consistent formatting.
-                new_kernels.append(match.group().strip())
-
-        # Identify the insertion point after the last kernel in the original code.
-        insertion_point = 0
-        for match in re.finditer(r"\}\s*(?=\Z|\s*__global__)", self.result, re.DOTALL):
-            insertion_point = match.end()
-
-        # Combine the code segments, ensuring consistent newline usage.
-        # Only add newlines if there are existing kernels; adjust for both original code and new kernels.
-        if self.result and new_kernels:
-            prev = self.result[:insertion_point].rstrip()
-            nxt = self.result[insertion_point:].lstrip()
-            updated_code = prev + "\n\n" + "\n\n".join(new_kernels) + "\n" + nxt
-        elif not self.result and new_kernels:
-            updated_code = "\n\n".join(new_kernels)
-        else:
-            updated_code = self.result
-
-        self.result = updated_code.strip()
+    def integrate_shared_cuda_kernels(self):
+        orig, optim = self.original, self.optimized
+        messages = self.prompt_builder.build_rewrite_messages(orig, optim)
+        try:
+            return self.runner.get_gpt_response_from_messages(messages)
+        except Exception as e:
+            raise ValueError(f"Error requesting GPT response: {str(e)}")
 
     def rewrite(self) -> str:
-        self.add_new_imports_and_globals()
-        self.swap_shared_cuda_kernels()
-        self.add_new_cuda_kernels()
+        self.integrate_shared_cuda_kernels()
         return self.result

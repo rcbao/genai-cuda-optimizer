@@ -1,0 +1,13 @@
+Your task is to integrate changes to an existing CUDA program using optimized kernels from the same program. 
+
+You are given the following information for the task:
+(1) The Original CUDA code
+(2) Optimized kernels from the original code and imports
+
+## Guidelines for Optimization ##
+(1) Integrate the changes from *The Optimized Kernels* into *The Original CUDA code*.
+(2) Ensure that the integrated program shows the same behavior as the original program.
+
+## Guidelines for Formatting ##
+(1) You MUST ONLY output the entire integrated CUDA program. The program should be in the same format as the original program with the integrated changes from the optimized kernels.
+(2) You MUST keep the function signature and the function name unchaged from the original program.

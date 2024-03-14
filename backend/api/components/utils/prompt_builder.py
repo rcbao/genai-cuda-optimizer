@@ -28,3 +28,19 @@ class PromptBuilder:
         user_prompt = self.build_newchat_user_prompt(code, version, priority)
 
         return self.build_messages(system_prompt, user_prompt)
+
+    def build_rewrite_user_prompt(self, original: str, optimized: str) -> str:
+        user_prompt = prompt_paths["integrate_changes"].user
+        user_prompt = self.file_handler.read_file(user_prompt)
+
+        return user_prompt.format(original=original, optimized=optimized)
+
+    def build_rewrite_system_prompt(self) -> str:
+        system_prompt = prompt_paths["integrate_changes"].system
+        return self.file_handler.read_file(system_prompt)
+
+    def build_rewrite_messages(self, original_code, optimized_code):
+        system_prompt = self.build_rewrite_system_prompt()
+        user_prompt = self.build_rewrite_user_prompt(original_code, optimized_code)
+
+        return self.build_messages(system_prompt, user_prompt)

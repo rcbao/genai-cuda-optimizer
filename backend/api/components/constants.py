@@ -6,7 +6,11 @@ prompt_paths = {
     "new_task": PromptPath(
         system="../llm_prompts/openai_cuda_optimize_sys.txt",
         user="../llm_prompts/openai_cuda_optimize_user.txt",
-    )
+    ),
+    "integrate_changes": PromptPath(
+        system="../llm_prompts/openai_cuda_integrate_sys.txt",
+        user="../llm_prompts/openai_cuda_integrate_user.txt",
+    ),
 }
 
 performance_priorities = {
