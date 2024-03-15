@@ -14,18 +14,20 @@ prompt_paths = {
 }
 
 performance_priorities = {
-    1: "Your task is to enhance the execution speed with minimal modifications. Prioritize straightforward and easily implementable optimizations.",
-    2: "Your task is optimize the code for faster execution speed through effective strategies.",
-    3: "Your goal is to achieve the highest possible acceleration of CUDA kernel execution. Use all available means to optimize performance.",
+    1: "You MUST enhance the execution speed with minimal modifications. Prioritize straightforward and easily implementable optimizations.",
+    2: "You MUST optimize the code for faster execution speed through effective strategies.",
+    3: "You MUST optimize the code as much as possible using all available means, including advanced features.",
 }
 
 
 readability_priorities = {
-    1: "You must improve code readability with minimal changes. Focus on clear and simple enhancements.",
-    2: "You must enhance code readability by applying best practices. Streamline and clarify the code.",
-    3: "You must maximize code readability. Apply comprehensive strategies to ensure the code is as clear and intuitive as possible.",
+    1: "You must also improve code readability with small changes.",
+    2: "You must also improve readability by applying best practices.",
+    3: "You must maximize code readability with comprehensive changes.",
 }
 
 
 OPENAI_MODEL = "gpt-4-turbo-preview"
+LIGHTWEIGHT_OPENAI_MODEL = "gpt-3.5-turbo"
+
 OPENAI_MAX_TOKENS = 2048

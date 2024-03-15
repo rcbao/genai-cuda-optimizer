@@ -7,11 +7,10 @@ from .components.openai_connector import OpenaiConnector
 from dotenv import load_dotenv
 
 from django.views import generic
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.shortcuts import render
-from api.models import Settings, CodeComparison, Code
-
+from api.models import Settings, CodeComparison
 from . import views
 
 load_dotenv()
@@ -19,7 +18,7 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 
-def return_internal_server_error(error = None):
+def return_internal_server_error(error=None):
     if error:
         print("return_internal_server_error: ")
         print("error: ", str(error))
@@ -53,56 +52,48 @@ class OptimizeCUDAView(APIView):
             print(e)
             return return_internal_server_error(e)
 
+
 class SettingsView(generic.ListView):
     model = Settings
     template_name = "settings.html"
+
 
 class CodeComparisonView(generic.ListView):
     model = CodeComparison
     template_name = "code_comparison.html"
 
-# METHODS
-    
-def call_api(code, version, performance, readability):
-    try:
-        print("opening connector::")
-        connector = OpenaiConnector(openai_api_key)
-        print("got connector")
-        response = connector.create_newchat(code, version, performance, readability)
-        print("response:: ")
-        print(response)
-        return Response(response, status=status.HTTP_200_OK).data
 
-    except ValueError as ve:
-        return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        print("an error happened")
-        print(e)
-        return return_internal_server_error()
-    
 def optimize_code(request):
     try:
         # get POST request data
-        req_CUDA_version = request.POST['CUDA_version']
-        req_speed = request.POST['speed_rating']
-        req_readability = request.POST['readability_rating']
-        req_code = request.POST['original_code']
-        response = call_api(req_code, req_CUDA_version, req_speed, req_readability)
-        print(response)
+        version = request.POST["CUDA_version"]
+        performance = request.POST["speed_rating"]
+        readability = request.POST["readability_rating"]
+        code = request.POST["original_code"]
 
-        if 'error' in response:
+        connector = OpenaiConnector(openai_api_key)
+        response = connector.create_newchat(code, version, performance, readability)
+        print("view response::", response)
+        optimize_code = response["content"]
+
+        if "error" in response:
             return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
         else:
-            print("response.data::")
-            print(str(response))
-            print(response['content'])
-            optimized_code = response['content']  # Assuming response is a Django HttpResponse object
-            return render(request, 'code_comparison.html', {"original_code": req_code, "optimized_code": optimized_code})
-    
+            return render(
+                request,
+                "code_comparison.html",
+                {"original_code": code, "optimized_code": optimize_code},
+            )
+
     except KeyError as e:
-        return JsonResponse({"error": f"Missing parameter: {e}"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(
+            {"error": f"Missing parameter: {e}"}, status=status.HTTP_400_BAD_REQUEST
+        )
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return JsonResponse(
+            {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
 
 def back(request):
     return HttpResponseRedirect(reverse("settings"))

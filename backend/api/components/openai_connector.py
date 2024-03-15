@@ -32,17 +32,11 @@ class OpenaiConnector:
         raise ValueError(error)
 
     def create_newchat(self, code, version: str, performance: int, readablity: int):
-        print("create_newchat:")
         priority = self.get_priority_statement_from_level(performance, readablity)
-        print("got priority")
         messages = self.prompt_builder.build_newchat_messages(code, version, priority)
-        print("got messages")
-        print(messages)
         try:
-
-            optimized_code = self.runner.get_gpt_response_from_messages(messages)
-            rewriter = CudaCodeRewriter(code, optimized_code)
-            res = rewriter.rewrite()
-            return res
+            llm_response = self.runner.get_gpt_response_from_messages(messages)
+            rewriter = CudaCodeRewriter(code, llm_response)
+            return rewriter.rewrite()
         except Exception as e:
             raise ValueError(f"Error requesting GPT response: {str(e)}")

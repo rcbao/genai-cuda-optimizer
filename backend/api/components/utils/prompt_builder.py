@@ -29,18 +29,31 @@ class PromptBuilder:
 
         return self.build_messages(system_prompt, user_prompt)
 
-    def build_rewrite_user_prompt(self, original: str, optimized: str) -> str:
+    def build_rewrite_user_prompt(
+        self, original: str, optimized: str, signatures: dict[str, list[str]]
+    ) -> str:
         user_prompt = prompt_paths["integrate_changes"].user
         user_prompt = self.file_handler.read_file(user_prompt)
 
-        return user_prompt.format(original=original, optimized=optimized)
+        shared_signatures = ", ".join(signatures["shared"])
+        new_signatures = ", ".join(signatures["new"])
+
+        res = user_prompt.format(
+            original=original,
+            optimized=optimized,
+            shared=shared_signatures,
+            new=new_signatures,
+        )
+        return res
 
     def build_rewrite_system_prompt(self) -> str:
         system_prompt = prompt_paths["integrate_changes"].system
         return self.file_handler.read_file(system_prompt)
 
-    def build_rewrite_messages(self, original_code, optimized_code):
+    def build_rewrite_messages(self, original_code, optimized_code, signatures):
         system_prompt = self.build_rewrite_system_prompt()
-        user_prompt = self.build_rewrite_user_prompt(original_code, optimized_code)
+        user_prompt = self.build_rewrite_user_prompt(
+            original_code, optimized_code, signatures
+        )
 
         return self.build_messages(system_prompt, user_prompt)

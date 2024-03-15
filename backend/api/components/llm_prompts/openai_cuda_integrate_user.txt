@@ -7,3 +7,13 @@
 ```cuda
 {optimized}
 ```
+
+## Signatures shared by the original and optimized Codes ##
+```
+{shared}
+```
+
+## Signatures unique to the optimized code ##
+```
+{new}
+```

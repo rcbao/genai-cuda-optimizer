@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api.views import *
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,5 +26,6 @@ urlpatterns = [
     path("settings/", SettingsView.as_view(), name="settings"),
     path("code_comparison/", CodeComparisonView.as_view(), name="code_comparison"),
     path("optimize_code/", views.optimize_code, name="optimize_code"),
-    path("back/", views.back, name="back")
+    path("back/", views.back, name="back"),
+    path("", RedirectView.as_view(url="/settings/", permanent=False)),
 ]

@@ -2,7 +2,9 @@ Your task is to integrate changes to an existing CUDA program using optimized ke
 
 You are given the following information for the task:
 (1) The Original CUDA code
-(2) Optimized kernels from the original code and imports
+(2) Optimized kernels (based on the original code) and related imports
+(3) Signatures shared by the original and optimized Codes
+(4) Signatures unique to the optimized code
 
 ## Guidelines for Optimization ##
 (1) Integrate the changes from *The Optimized Kernels* into *The Original CUDA code*.

@@ -15,18 +15,20 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 
 class GPTRunner:
-    def __init__(self):
+    def __init__(self, model=OPENAI_MODEL, max_tokens=OPENAI_MAX_TOKENS):
         self.client = OpenAI(api_key=openai_api_key)
         self.file_handler = FileHandler()
         self.formatter = ChatHistoryFormatter()
         self.prompt_builder = PromptBuilder()
+        self.model = model
+        self.max_tokens = max_tokens
 
     def get_gpt_response(self, messages: list, response_format=None) -> str:
         response = self.client.chat.completions.create(
-            model=OPENAI_MODEL,
+            model=self.model,
             messages=messages,
             response_format=response_format,
-            max_tokens=OPENAI_MAX_TOKENS,
+            max_tokens=self.max_tokens,
             temperature=0,
         )
         gpt_response = response.choices[0].message.content
@@ -88,9 +90,9 @@ class GPTRunner:
 
         return new_program
 
-    def get_gpt_response_from_messages(self, messages: list):
+    def get_gpt_response_from_messages(self, messages: list) -> dict[str, str]:
         response = self.get_gpt_response(messages)
-        print("response:: ", response)
+        print("get_gpt_response_from_messages response:: ", response)
 
         if response:
             message = OpenAIMessage("assistant", response)
