@@ -76,6 +76,9 @@ def optimize_code(request):
         print("view response::", response)
         optimize_code = response["content"]
 
+        if optimize_code.startswith("```cuda\n") and optimize_code.endswith("\n```"):
+            optimize_code = optimize_code[len("```cuda\n") : -len("\n```")]
+
         if "error" in response:
             return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
         else:

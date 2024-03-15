@@ -102,9 +102,7 @@ class CudaCodeRewriter:
             orig, optim, self.kernel_diff
         )
         try:
-            res = self.runner.get_gpt_response_from_messages(messages)
-            if res.startswith("```cuda\n") and res.endswith("\n```"):
-                return res[len("```cuda\n") : -len("\n```")]
+            return self.runner.get_gpt_response_from_messages(messages)
         except Exception as e:
             raise ValueError(f"Error requesting GPT response: {str(e)}")
 
