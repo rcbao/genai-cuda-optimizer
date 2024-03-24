@@ -1,0 +1,10 @@
+## Optimization Suggestions ##
+"""
+{optimization_suggestions}
+"""
+
+## Optimized Kernels ##
+```cuda
+{optimized}
+```
+
