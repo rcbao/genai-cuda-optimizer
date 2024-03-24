@@ -1,0 +1,9 @@
+## Original Code ##
+```cuda
+{original}
+```
+
+## Optimization Suggestions ##
+"""
+{optimization_suggestions}
+"""

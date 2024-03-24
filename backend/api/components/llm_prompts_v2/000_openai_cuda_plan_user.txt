@@ -1,0 +1,10 @@
+## CUDA Code ## 
+```cuda
+{code}
+```
+
+## CUDA Version ##
+{version}
+
+## Optimization Priority Statement ##
+{priority}
