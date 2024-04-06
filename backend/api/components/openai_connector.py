@@ -4,6 +4,7 @@ from .utils.gpt_runner import GPTRunner
 from .utils.prompt_builder import PromptBuilder
 from .constants import performance_priorities, readability_priorities
 from .utils.cuda_code_rewriter import CudaCodeRewriter
+from .utils.cuda_reason_generator import CudaReasonGenerator
 
 
 class OpenaiConnector:
@@ -37,6 +38,15 @@ class OpenaiConnector:
         try:
             llm_response = self.runner.get_gpt_response_from_messages(messages)
             rewriter = CudaCodeRewriter(code, llm_response)
-            return rewriter.rewrite()
+            optimized_code = rewriter.rewrite().content
+
+            generator = CudaReasonGenerator(optimized_code)
+            reason_response = generator.generate_reasons().content
+
+            return {
+                "content": optimized_code,
+                "reasons": reason_response,
+            }
+
         except Exception as e:
             raise ValueError(f"Error requesting GPT response: {str(e)}")
