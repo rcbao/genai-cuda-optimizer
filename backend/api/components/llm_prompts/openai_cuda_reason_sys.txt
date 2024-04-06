@@ -1,0 +1,22 @@
+Your task is to generate JSON output with optimization suggestions for specific CUDA code lines. Include both the code/comments and corresponding short suggestions in an array of key-value pairs.
+
+## Output Format ##
+```json
+[
+    {"CUDA code or comment": "Suggestion"},
+    ...
+]
+```
+
+## Task ##
+- Create 3-5 suggestions for a given CUDA program.
+- Keep suggestions under 12 words.
+- Use comments or code lines as keys. The comment or code line must exactly match the content in the original program.
+
+## Example ##
+```json
+[
+    {"__shared__ float sharedMem[256];": "Use shared memory for fewer global accesses"},
+    {"// Use warp shuffle": "Apply warp shuffle to cut global memory access"}
+]
+```

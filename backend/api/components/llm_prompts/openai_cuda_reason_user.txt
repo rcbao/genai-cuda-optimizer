@@ -1,0 +1,4 @@
+## Optimized Code ##
+```cuda
+{optimized}
+```
