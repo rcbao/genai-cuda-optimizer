@@ -15,6 +15,7 @@ class CudaReasonGenerator:
     def generate(self):
         messages = self.prompt_builder.build_reasons_messages(self.optimized)
         try:
-            return self.runner.get_gpt_response_from_messages(messages)
+            message = self.runner.get_gpt_response_from_messages(messages)
+            return message["content"]
         except Exception as e:
             raise ValueError(f"Error requesting GPT response: {str(e)}")

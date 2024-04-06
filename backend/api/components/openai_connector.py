@@ -38,10 +38,12 @@ class OpenaiConnector:
         try:
             llm_response = self.runner.get_gpt_response_from_messages(messages)
             rewriter = CudaCodeRewriter(code, llm_response)
-            optimized_code = rewriter.rewrite().content
+            optimized_code = rewriter.rewrite()
+            print(optimized_code)
 
             generator = CudaReasonGenerator(optimized_code)
-            reason_response = generator.generate_reasons().content
+            reason_response = generator.generate()
+            print(reason_response)
 
             return {
                 "content": optimized_code,

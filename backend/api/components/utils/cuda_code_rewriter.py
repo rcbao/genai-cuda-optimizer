@@ -72,7 +72,8 @@ class CudaCodeRewriter:
             orig, optim, self.kernel_diff
         )
         try:
-            return self.runner.get_gpt_response_from_messages(messages)
+            message = self.runner.get_gpt_response_from_messages(messages)
+            return message["content"]
         except Exception as e:
             raise ValueError(f"Error requesting GPT response: {str(e)}")
 

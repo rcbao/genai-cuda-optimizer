@@ -1,8 +1,7 @@
 import os
-from rest_framework.views import APIView
+import json
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import OptimizationTaskSerializer
 from .components.openai_connector import OpenaiConnector
 from dotenv import load_dotenv
 
@@ -27,32 +26,6 @@ def return_internal_server_error(error=None):
     return Response(error_response, status=error_code)
 
 
-class OptimizeCUDAView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = OptimizationTaskSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        if not serializer or not serializer.validated_data:
-            print("Invalid serializer")
-            return return_internal_server_error()
-
-        code = serializer.validated_data["code"]
-        version = serializer.validated_data["version"]
-        optimization_level = serializer.validated_data["level"]
-
-        try:
-            connector = OpenaiConnector(openai_api_key)
-            response = connector.create_newchat(code, version, optimization_level)
-
-            return Response(response, status=status.HTTP_200_OK)
-
-        except ValueError as ve:
-            return Response({"error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print(e)
-            return return_internal_server_error(e)
-
-
 class SettingsView(generic.ListView):
     model = Settings
     template_name = "settings.html"
@@ -66,10 +39,13 @@ class CodeComparisonView(generic.ListView):
 def optimize_code(request):
     try:
         # get POST request data
-        version = request.POST["CUDA_version"]
-        performance = request.POST["speed_rating"]
-        readability = request.POST["readability_rating"]
-        code = request.POST["original_code"]
+        data = json.loads(request.body)
+        print("request.POST")
+        print(request.POST)
+        version = data["CUDA_version"]
+        performance = data["speed_rating"]
+        readability = data["readability_rating"]
+        code = data["original_code"]
 
         connector = OpenaiConnector(openai_api_key)
         response = connector.create_newchat(code, version, performance, readability)
