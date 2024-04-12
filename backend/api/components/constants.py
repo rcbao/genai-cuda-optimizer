@@ -11,6 +11,10 @@ prompt_paths = {
         system="../llm_prompts/openai_cuda_integrate_sys.txt",
         user="../llm_prompts/openai_cuda_integrate_user.txt",
     ),
+    "reasons": PromptPath(
+        system="../llm_prompts/openai_cuda_reasons_sys.txt",
+        user="../llm_prompts/openai_cuda_reasons_user.txt",
+    ),
 }
 
 performance_priorities = {

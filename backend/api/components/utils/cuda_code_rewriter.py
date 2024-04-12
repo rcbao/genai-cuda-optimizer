@@ -45,36 +45,6 @@ class SignatureDiff:
         return self.diff_kernel_signatures(originals, news)
 
 
-class CudaImportAndGlobalMerger:
-    def find_kernel_start(self, code: str) -> int:
-        """Find the start index of the first CUDA kernel in the code."""
-        pattern = r"__global__\s+void\s+[a-zA-Z_]\w*\s*\([^)]*\)"
-        match = re.search(pattern, code)
-        return match.start() if match else len(code)
-
-    def extract_prekernel(self, code: str) -> str:
-        """Extract the imports and global variable declarations from the code."""
-        return code[: self.find_kernel_start(code)].strip()
-
-    def merge_prekernels(self, code1: str, code2: str) -> str:
-        """Merge two sections of code while removing duplicates."""
-        combined_lines = set(code1.splitlines()) | set(code2.splitlines())
-        return "\n".join(sorted(combined_lines)).strip()
-
-    def add_new_imports_and_globals(self, original: str, optimized: str) -> str:
-        """Replace the imports and globals in original_code with merged versions from both codes."""
-        original_res = self.extract_prekernel(original)
-        optimized_res = self.extract_prekernel(optimized)
-        merged = self.merge_prekernels(original_res, optimized_res)
-
-        # Append the kernel code from the original source, ensuring proper formatting.
-        kernel_code_start = self.find_kernel_start(original)
-
-        if merged:
-            return f"{merged}\n{original[kernel_code_start:].strip()}"
-        return original[kernel_code_start:].strip()
-
-
 class CudaCodeRewriter:
     """
     A class to rewrite CUDA code based on the output of the OpenAI language model.
@@ -102,7 +72,8 @@ class CudaCodeRewriter:
             orig, optim, self.kernel_diff
         )
         try:
-            return self.runner.get_gpt_response_from_messages(messages)
+            message = self.runner.get_gpt_response_from_messages(messages)
+            return message["content"]
         except Exception as e:
             raise ValueError(f"Error requesting GPT response: {str(e)}")
 
