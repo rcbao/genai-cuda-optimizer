@@ -38,14 +38,22 @@ class CodeComparisonView(generic.ListView):
 
 def optimize_code(request):
     try:
+        # FOR ROBERT'S
         # get POST request data
-        data = json.loads(request.body)
-        print("request.POST")
-        print(request.POST)
-        version = data["CUDA_version"]
-        performance = data["speed_rating"]
-        readability = data["readability_rating"]
-        code = data["original_code"]
+        # print("got here")
+        # data = json.loads(request.body)
+        # print("request.POST")
+        # print(request.POST)
+        # version = data["CUDA_version"]
+        # performance = data["speed_rating"]
+        # readability = data["readability_rating"]
+        # code = data["original_code"]
+
+        # FOR CANDACE'S
+        # version = request.POST["CUDA_version"]
+        # performance = request.POST["speed_rating"]
+        # readability = request.POST["readability_rating"]
+        # code = request.POST["original_code"]
 
         connector = OpenaiConnector(openai_api_key)
         response = connector.create_newchat(code, version, performance, readability)
