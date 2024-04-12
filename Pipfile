@@ -4,9 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-llama-index = "*"
 djangorestframework = "*"
 django = "*"
+python-dotenv = "*"
+openai = "*"
+llama-index-core = "*"
+django-forms-bootstrap = "*"
+django-bootstrap5 = "*"
 
 [dev-packages]
 
