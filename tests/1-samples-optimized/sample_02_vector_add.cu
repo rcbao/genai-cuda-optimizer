@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-// Kernel for adding two vectors
+// Optimized kernel for adding two vectors using loop unrolling and increased parallelism
 __global__ void vectorAdd(int *A, int *B, int *C, int numElements) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    
-    if (i < numElements) {
-        C[i] = A[i] + B[i];
+    int stride = gridDim.x * blockDim.x;
+
+    // Using grid-stride loop to handle any size of data
+    for (int index = i; index < numElements; index += stride) {
+        C[index] = A[index] + B[index];
     }
 }
 

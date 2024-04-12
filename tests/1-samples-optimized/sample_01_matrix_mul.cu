@@ -1,16 +1,37 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-// Kernel for matrix multiplication (inefficient version)
+// Optimized kernel for matrix multiplication using shared memory and loop unrolling
 __global__ void matrixMul(int *A, int *B, int *C, int width) {
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    // Define block size and shared memory tiles
+    const int BLOCK_SIZE = 16;
+    __shared__ int As[BLOCK_SIZE][BLOCK_SIZE];
+    __shared__ int Bs[BLOCK_SIZE][BLOCK_SIZE];
+
+    int bx = blockIdx.x, by = blockIdx.y;
+    int tx = threadIdx.x, ty = threadIdx.y;
+    int row = by * BLOCK_SIZE + ty;
+    int col = bx * BLOCK_SIZE + tx;
+
+    int sum = 0;
+
+    // Loop over the tiles of the input matrices
+    for (int m = 0; m < (width / BLOCK_SIZE); ++m) {
+        // Load tiles into shared memory
+        As[ty][tx] = A[row * width + (m * BLOCK_SIZE + tx)];
+        Bs[ty][tx] = B[(m * BLOCK_SIZE + ty) * width + col];
+        __syncthreads();  // Synchronize to make sure the matrices are loaded
+
+        // Multiply the two matrices together;
+        // Use loop unrolling for better performance
+        #pragma unroll
+        for (int k = 0; k < BLOCK_SIZE; ++k) {
+            sum += As[ty][k] * Bs[k][tx];
+        }
+        __syncthreads();  // Synchronize before loading the next tile
+    }
 
     if (row < width && col < width) {
-        int sum = 0;
-        for (int k = 0; k < width; k++) {
-            sum += A[row * width + k] * B[k * width + col];
-        }
         C[row * width + col] = sum;
     }
 }

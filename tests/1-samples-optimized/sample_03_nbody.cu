@@ -10,29 +10,49 @@ struct Body {
     float mass;
 };
 
-// Kernel to compute forces and update velocities
+/**
+ * Optimized kernel to compute forces and update velocities using shared memory and minimizing redundant calculations.
+ * - Utilizes shared memory to reduce global memory accesses.
+ * - Each block loads a subset of bodies into shared memory.
+ * - Uses tiling to handle interactions within blocks efficiently.
+ */
 __global__ void updateVelocities(Body *bodies, int n) {
+    extern __shared__ Body sharedBodies[];
     int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int tx = threadIdx.x;
+    float fx = 0, fy = 0, fz = 0;
+
     if (i < n) {
-        float fx = 0, fy = 0, fz = 0;
-        for (int j = 0; j < n; j++) {
-            if (i != j) {
-                float dx = bodies[j].x - bodies[i].x;
-                float dy = bodies[j].y - bodies[i].y;
-                float dz = bodies[j].z - bodies[i].z;
-                float distSqr = dx * dx + dy * dy + dz * dz + 1e-10f; // Adding small constant to avoid division by zero
-                float invDist = 1.0f / sqrt(distSqr);
-                float invDist3 = invDist * invDist * invDist;
-                float force = G * bodies[i].mass * bodies[j].mass * invDist3;
-                fx += force * dx;
-                fy += force * dy;
-                fz += force * dz;
+        Body myBody = bodies[i];
+        for (int tile = 0; tile < gridDim.x; ++tile) {
+            int idx = tile * blockDim.x + tx;
+            if (idx < n) {
+                sharedBodies[tx] = bodies[idx];
             }
+            __syncthreads();
+
+            // Compute forces using bodies in shared memory
+            for (int j = 0; j < blockDim.x; ++j) {
+                if (tile * blockDim.x + j < n && i != tile * blockDim.x + j) {
+                    float dx = sharedBodies[j].x - myBody.x;
+                    float dy = sharedBodies[j].y - myBody.y;
+                    float dz = sharedBodies[j].z - myBody.z;
+                    float distSqr = dx * dx + dy * dy + dz * dz + 1e-10f;
+                    float invDist = rsqrt(distSqr);  // Using rsqrt for faster computation
+                    float invDist3 = invDist * invDist * invDist;
+                    float force = G * myBody.mass * sharedBodies[j].mass * invDist3;
+                    fx += force * dx;
+                    fy += force * dy;
+                    fz += force * dz;
+                }
+            }
+            __syncthreads();
         }
+
         // Update velocities based on computed force
-        bodies[i].vx += fx / bodies[i].mass;
-        bodies[i].vy += fy / bodies[i].mass;
-        bodies[i].vz += fz / bodies[i].mass;
+        bodies[i].vx += fx / myBody.mass;
+        bodies[i].vy += fy / myBody.mass;
+        bodies[i].vz += fz / myBody.mass;
     }
 }
 
@@ -67,8 +87,8 @@ int main() {
     // Record the start event
     cudaEventRecord(start, 0);
 
-    // Launch the kernel
-    updateVelocities<<<blocksPerGrid, threadsPerBlock>>>(d_bodies, numBodies);
+    // Launch the optimized kernel
+    updateVelocities<<<blocksPerGrid, threadsPerBlock, threadsPerBlock * sizeof(Body)>>>(d_bodies, numBodies);
 
     // Record the stop event
     cudaEventRecord(stop, 0);
