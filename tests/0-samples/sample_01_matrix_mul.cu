@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-// Kernel for matrix multiplication (inefficient version)
+// Kernel for matrix multiplication 
 __global__ void matrixMul(int *A, int *B, int *C, int width) {
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int col = blockIdx.x * blockDim.x + threadIdx.x;
