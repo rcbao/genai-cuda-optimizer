@@ -10,71 +10,82 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-  {% load static %}
   <meta charset="utf-8" />
   {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'api/style.css' %}">
 </head>
 
 <body>
-
-  <div class="m-3" style="min-height:300px;">
-    <form action="{% url 'optimize_code' %}" method="post">
+  <div>
+    <a class="btn btn-secondary"
+    id="settings-btn"
+    data-bs-toggle="collapse" 
+    href="#settings-box" 
+    role="button" 
+    aria-expanded="false" 
+    aria-controls="settings-box"
+  >
+   Settings
+  </a>
+    <form class="row form-row" action="{% url 'optimize_code' %}" method="post">
       {% csrf_token %}
-
-      <div class="container">
-        <div class="row" style="padding:2vw">
-          <div class="col-sm">
-            <p>CUDA Version</p>
+      <div class="collapse collapse-horizontal" id="settings-box">
+        <div class="container">
+          <div class="row">
+            <a class="btn btn-secondary"
+            id="close-btn"
+            data-bs-toggle="collapse" 
+            href="#settings-box" 
+            role="button" 
+            aria-expanded="false" 
+            aria-controls="settings-box"
+            >
+            x
+            </a>
           </div>
-          <div class="col-sm">
-            <div class="settings-field">
-              <input type="text" class="form-control" name="CUDA_version" id="CUDA_version"
-                value="{{ CUDA_version.text }}" />
+          <div class="row">
+            <div class="col">
+              <div class="settings-field">
+                <label for="CUDA_version">CUDA Version</label>
+                <input type="text" class="form-control" name="CUDA_version" id="CUDA_version"
+                  value="{{ CUDA_version.text }}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="settings-field">
+                <label for="speed_rating">Speed</label>
+                <select name="speed_rating" id="speed_rating" class="form-select">
+                  <option id="rating" value="1"> 1 </option>
+                  <option id="rating" value="2"> 2 </option>
+                  <option id="rating" value="3"> 3 </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="settings-field">
+                <label for="readability_rating">Readability</label>
+                <select name="readability_rating" id="readability_rating" class="form-select" placeholder="Readability">
+                  <option id="rating" value="1"> 1 </option>
+                  <option id="rating" value="2"> 2 </option>
+                  <option id="rating" value="3"> 3 </option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="container">
-        <div class="row" style="padding:2vw">
-          <div class="col-sm">
-            <p>Speed</p>
+        <div class="col" id="code-submit-box">
+          <div class="row" id="code-box" >
+            <textarea class="form-control" name="original_code" id="original_code" value="{{ original_code.text }}"
+              placeholder="insert code here" rows="15"></textarea>
           </div>
-          <div class="col-sm">
-            <div class="settings-field">
-              <select name="speed_rating" id="speed_rating" class="form-select">
-                <option id="rating" value="1"> 1 </option>
-                <option id="rating" value="2"> 2 </option>
-                <option id="rating" value="3"> 3 </option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container">
-        <div class="row" style="padding:2vw">
-          <div class="col-sm">
-            <p>Readability</p>
-          </div>
-          <div class="col-sm">
-            <div class="settings-field">
-              <select name="readability_rating" id="readability_rating" class="form-select">
-                <option id="rating" value="1"> 1 </option>
-                <option id="rating" value="2"> 2 </option>
-                <option id="rating" value="3"> 3 </option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="form-group" style="padding: 1vw">
-        <textarea class="form-control" name="original_code" id="original_code" value="{{ original_code.text }}"
-          placeholder="insert code here" rows="15"></textarea>
-      </div>
-
-          <div class="d-flex justify-content-center align-items-end">
+          <div class="d-flex justify-content-center align-items-end" id="submit-div">
             <input id="submit_btn" class="align-text-bottom btn btn-primary" id="submit_btn" type="submit" value="Optimize"
             />
           </div>
@@ -97,7 +108,18 @@
     $("#submit_btn").click(function(){
       $(".loading-screen").fadeIn();
     });
+    
+    $("#settings-btn").click(function(){
+      $("#code-submit-box").css("margin", "1ex 0");
+      $(this).css("display", "none");
+    })  
+
+    $("#close-btn").click(function(){
+      $("#settings-btn").css("display","");
+      $("#code-submit-box").css("margin", "1ex 2ex");
+    })
   });
+
 </script>
 
 </html>

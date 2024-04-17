@@ -1,3 +1,38 @@
+body{
+    max-height: 100%;
+}
+
+#settings-btn{
+    margin-left: 1ex;
+}
+
+#settings-box {
+    max-width: 10vw; 
+    margin: 1ex 0 1ex 1ex;
+    background-color: aliceblue;
+    border-radius: 1ex;
+    transition: .15s !important;
+}
+
+#code-submit-box{
+    max-height: 85%;
+    max-width: 100%;
+    margin: 1ex 2ex;
+}
+
+#code-box{
+    height: 100%;
+}
+
+.form-row{
+    height: 100%;
+}
+
+#submit-div{
+    margin: 1vh;
+}
+
+/* SPINNER */
 .loading-screen {
     position: fixed;
     top: 0;
