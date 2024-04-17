@@ -17,11 +17,13 @@ function calc_stats {
 
     # Calculate total
     for time in "${times[@]}"; do
-        total=$(echo "$total + $time" | bc -l)
+        # Ensure the time is a valid number, removing extra characters and potential spaces
+        clean_time=$(echo "$time" | sed 's/[^0-9.]*//g' | tr -d '[:space:]')
+        total=$(echo "$total + $clean_time" | bc -l)
     done
 
     # Average
-    average=$(echo "$total / $length" | bc -l)
+    average=$(echo "scale=5; $total / $length" | bc -l)
 
     # Sort times to calculate median and percentiles
     IFS=$'\n' sorted_times=($(sort -n <<<"${times[*]}"))
@@ -30,7 +32,7 @@ function calc_stats {
     # Median
     if (( $length % 2 == 0 )); then
         mid_index=$(($length / 2))
-        median=$(echo "(${sorted_times[$mid_index]} + ${sorted_times[$mid_index - 1]}) / 2" | bc -l)
+        median=$(echo "scale=5; (${sorted_times[$mid_index]} + ${sorted_times[$mid_index - 1]}) / 2" | bc -l)
     else
         mid_index=$(($length / 2))
         median=${sorted_times[$mid_index]}
@@ -47,17 +49,17 @@ function calc_stats {
     # Standard deviation
     sum_sq=0
     for time in "${times[@]}"; do
-        sum_sq=$(echo "$sum_sq + ($time - $average)^2" | bc -l)
+        clean_time=$(echo "$time" | sed 's/[^0-9.]*//g' | tr -d '[:space:]')
+        sum_sq=$(echo "$sum_sq + ($clean_time - $average)^2" | bc -l)
     done
-    stddev=$(echo "sqrt($sum_sq / $length)" | bc -l)
+    stddev=$(echo "scale=5; sqrt($sum_sq / $length)" | bc -l)
 
     # Print results
-    echo "Average: $average ms"
-    echo "Median: $median ms"
-    echo "Standard Deviation: $stddev ms"
-    echo "Min: $min ms"
-    echo "Max: $max ms"
-    echo "95th percentile: $p95 ms"
+    # Print results in table format
+    echo -n "Metric             | Average   | Median    | Std Dev   | Min   | Max       | 95th Percentile "
+    echo -e "\nValues (ms)      | $average  | $median   | $stddev   | $min  | $max  | $p95"
+    echo ""
+
 }
 
 # Run samples and collect data
@@ -66,9 +68,9 @@ for i in $(seq 1 $num_runs); do
     readarray -t output < <(/bin/bash ../run_samples_base.sh)
 
     # Store results in respective arrays
-    times_matrix_mul+=("${output[0]//Elapsed time: /}")
-    times_vector_add+=("${output[1]//Elapsed time: /}")
-    times_nbody+=("${output[2]//Elapsed time: /}")
+    times_matrix_mul+=("$(echo ${output[0]} | grep -oP 'Elapsed time: \K[\d.]+')")
+    times_vector_add+=("$(echo ${output[1]} | grep -oP 'Elapsed time: \K[\d.]+')")
+    times_nbody+=("$(echo ${output[2]} | grep -oP 'Elapsed time: \K[\d.]+')")
 done
 
 # Calculate statistics for each program

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the number of runs
-num_runs=20
+num_runs=100
 
 # Create arrays to store times for each sample
 declare -a times_matrix_mul
