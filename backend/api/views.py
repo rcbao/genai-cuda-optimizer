@@ -61,9 +61,20 @@ def optimize_code(request):
         response = connector.create_newchat(code, version, performance, readability)
         print("view response::", response)
         optimize_code = response["content"]
+        reasons = response["reasons"]
 
+        print("Reasons", reasons)
         if optimize_code.startswith("```cuda\n") and optimize_code.endswith("\n```"):
             optimize_code = optimize_code[len("```cuda\n") : -len("\n```")]
+        
+        if reasons.startswith("```json\n") and reasons.endswith("\n```"):
+            reasons = reasons[len("```json\n") : -len("\n```")]
+        
+        reasons = json.loads(reasons)
+        parsed_reasons =[]
+        for item in reasons:
+            for key in item.keys():
+                parsed_reasons.append((key, item[key]))
 
         if "error" in response:
             return JsonResponse(response, status=status.HTTP_400_BAD_REQUEST)
@@ -71,7 +82,7 @@ def optimize_code(request):
             return render(
                 request,
                 "code_comparison.html",
-                {"original_code": code, "optimized_code": optimize_code},
+                {"original_code": code, "optimized_code": optimize_code, "reasons": parsed_reasons}
             )
         
         """ BEGINNING OF USING CONSTANTS """
@@ -188,13 +199,25 @@ def optimize_code(request):
         # }
         # """
         
+        # reasons = [{"__shared__ float As[BLOCK_SIZE][BLOCK_SIZE];": "Use shared memory to reduce global memory accesses"},
+        #             {"for (int i = 0; i < N/BLOCK_SIZE; ++i) {": "Optimize loop to maximize memory coalescing"},
+        #             {"sum += As[threadIdx.y][n] * Bs[n][threadIdx.x];": "Utilize vectorized memory access for better performance"},
+        #             {"cudaMalloc(&dA, size);": "Combine memory allocations for better memory management"},
+        #             {'cout << i << " " << duration << "s" << endl;': "Minimize I/O operations for faster execution"}]
+
         """ END OF USING CONSTANTS """
 
-        return render(
-                request,
-                "code_comparison.html",
-                {"original_code": code, "optimized_code": optimize_code},
-            )
+        # parsed_reasons = []
+        # for item in reasons:
+        #     for key in item.keys():
+        #         parsed_reasons.append(key)
+        #         parsed_reasons.append(item[key])
+
+        # return render(
+        #         request,
+        #         "code_comparison.html",
+        #         {"original_code": code, "optimized_code": optimize_code, "reasons": parsed_reasons},
+        #     )
 
     except KeyError as e:
         return JsonResponse(

@@ -64,6 +64,34 @@
               </div>
           </div>
       </div>
+      <div class="container">
+        <div class="row"  >
+          <!-- <ul style="list-style: none;"> 
+            {% for item in reasons %}
+              <li>
+                <strong>{{ item }}</strong>
+              </li>
+            {% endfor %}
+          </ul> -->
+          <table>
+            <thead>
+                <tr>
+                    <th>Optimization</th>
+                    <th>Reasoning</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for code, reason in reasons %}
+                <tr>
+                    <td>{{ code }}</td>
+                    <td>{{ reason }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+
+      </div>
       <form action="{% url 'back' %}" method="post">
         {% csrf_token %}
           <div class="d-flex justify-content-center align-items-end">
