@@ -32,9 +32,12 @@ class OpenaiConnector:
         error = f"Invalid optimization level. The value can be 1, 2, or 3."
         raise ValueError(error)
 
-    def create_newchat(self, code, version: str, performance: int, readablity: int):
+    def create_newchat(self, code, version: str, performance, readablity, gpu):
         priority = self.get_priority_statement_from_level(performance, readablity)
-        messages = self.prompt_builder.build_newchat_messages(code, version, priority)
+        messages = self.prompt_builder.build_newchat_messages(
+            code, version, priority, gpu
+        )
+        print("messages::", messages)
         try:
             llm_response = self.runner.get_gpt_response_from_messages(messages)
             rewriter = CudaCodeRewriter(code, llm_response)

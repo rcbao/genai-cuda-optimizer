@@ -56,9 +56,12 @@ def optimize_code(request):
         code = request.POST["original_code"]
         gpu = request.POST["gpu"]
 
+        print("GPU type::")
+        print(gpu)
+
         """ USING OPENAI API """
         connector = OpenaiConnector(openai_api_key)
-        response = connector.create_newchat(code, version, performance, readability)
+        response = connector.create_newchat(code, version, performance, readability, gpu)
         print("view response::", response)
         optimize_code = response["content"]
         reasons = response["reasons"]

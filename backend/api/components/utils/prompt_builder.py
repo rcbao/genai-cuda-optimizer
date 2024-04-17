@@ -1,5 +1,6 @@
 from .file_handler import FileHandler
 from ..constants import prompt_paths
+import json
 
 
 class PromptBuilder:
@@ -17,18 +18,46 @@ class PromptBuilder:
         ]
         return messages
 
-    def build_newchat_user_prompt(self, code: str, version: str, priority: str) -> str:
+    def build_newchat_user_prompt(
+        self, code: str, version: str, priority: str, gpu
+    ) -> str:
         user_prompt = prompt_paths["new_task"].user
         user_prompt = self.file_handler.read_file(user_prompt)
 
-        return user_prompt.format(code=code, version=version, priority=priority)
+        print("gpu::", gpu)
+
+        gpu_string = self.build_gpu_config(gpu)
+
+        return user_prompt.format(
+            code=code, version=version, priority=priority, gpu=gpu_string
+        )
 
     def build_newchat_system_prompt(self) -> str:
         return self.build_system_prompt("new_task")
 
-    def build_newchat_messages(self, code: str, version: str, priority: str):
+    def build_gpu_config(self, gpu):
+        config_db = self.file_handler.read_file("./gpu_specs.json")
+        print("config_db::", config_db)
+
+        gpu_config = json.loads(config_db)[gpu]
+        print("gpu_config::", gpu_config)
+
+        compute_capability = gpu_config["computeCapability"]
+        memory_size = gpu_config["memorySizeGb"]
+        bandwidth = gpu_config["memoryBandwidthGbPerSec"]
+        supported_types = ", ".join(gpu_config["quantizationLevels"]["supportedTypes"])
+        optimal_type = gpu_config["quantizationLevels"]["optimalType"]
+
+        # Constructing the summary string
+        summary = f"GPU Type: {gpu}. Compute Capability: {compute_capability}, Memory Size: {memory_size} GB, "
+        summary += f"Memory Bandwidth: {bandwidth} GB/s, Supported Quantization Types: {supported_types}, "
+        summary += f"Optimal Quantization Type: {optimal_type}"
+
+        return summary
+
+    def build_newchat_messages(self, code: str, version: str, priority: str, gpu):
         system_prompt = self.build_newchat_system_prompt()
-        user_prompt = self.build_newchat_user_prompt(code, version, priority)
+        user_prompt = self.build_newchat_user_prompt(code, version, priority, gpu)
 
         return self.build_messages(system_prompt, user_prompt)
 
@@ -74,3 +103,9 @@ class PromptBuilder:
         user_prompt = self.build_reasons_user_prompt(optimized_code)
 
         return self.build_messages(system_prompt, user_prompt)
+
+
+if __name__ == "__main__":
+    prompt_builder = PromptBuilder()
+
+    print(prompt_builder.build_gpu_config("TitanX"))

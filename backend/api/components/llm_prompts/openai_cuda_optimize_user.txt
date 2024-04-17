@@ -8,3 +8,6 @@
 
 ## Optimization Priority Statement
 {priority}
+
+## GPU Specifications 
+{gpu}
