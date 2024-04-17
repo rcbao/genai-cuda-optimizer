@@ -54,6 +54,7 @@ def optimize_code(request):
         performance = request.POST["speed_rating"]
         readability = request.POST["readability_rating"]
         code = request.POST["original_code"]
+        gpu = request.POST["gpu"]
 
         """ USING OPENAI API """
         connector = OpenaiConnector(openai_api_key)
