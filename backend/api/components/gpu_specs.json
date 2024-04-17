@@ -1,0 +1,40 @@
+{
+    "TitanX": {
+        "computeCapability": "7.5",
+        "memorySizeGb": 12,
+        "memoryBandwidthGbPerSec": 336,
+        "quantizationLevels": {
+            "supportedTypes": [
+                "fp32",
+                "fp16"
+            ],
+            "optimalType": "fp32"
+        }
+    },
+    "RTX2028Ti": {
+        "computeCapability": "7.5",
+        "memorySizeGb": 11,
+        "memoryBandwidthGbPerSec": 616,
+        "quantizationLevels": {
+            "supportedTypes": [
+                "fp32",
+                "fp16",
+                "int8"
+            ],
+            "optimalType": "fp16"
+        }
+    },
+    "RTX4000": {
+        "computeCapability": "8.9",
+        "memorySizeGb": 20,
+        "memoryBandwidthGbPerSec": 1008,
+        "quantizationLevels": {
+            "supportedTypes": [
+                "fp32",
+                "fp16",
+                "int8"
+            ],
+            "optimalType": "fp16"
+        }
+    }
+}
