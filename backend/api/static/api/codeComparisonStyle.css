@@ -4,7 +4,29 @@ body {
   font-family: "Work Sans", sans-serif;
 }
 
-/* KAYLEE'S NOTE: color #f08d49 */
+table.roundedCorners {
+  border-collapse: separate;
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+table.roundedCorners th,
+table.roundedCorners td {
+  padding: 10px;
+}
+
+table.roundedCorners tr:first-child th {
+  background-color: #91C9FF;
+  text-align: center;
+  font-size: 20px;
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+}
+
+table.roundedCorners tr:last-child td {
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
 
 /* 
 ========================
