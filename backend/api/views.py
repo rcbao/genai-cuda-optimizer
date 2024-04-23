@@ -38,8 +38,8 @@ class CodeComparisonView(generic.ListView):
 
 def optimize_code(request):
     """ UseOpenAI = Use GPT4 (True), Use Constants (False) """
-    # useOpenAI = True
-    useOpenAI = False
+    useOpenAI = True
+    # useOpenAI = False
 
     try:
         """ BACKEND """
