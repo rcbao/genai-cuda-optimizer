@@ -36,5 +36,20 @@
             ],
             "optimalType": "fp16"
         }
+    },
+    "A100": {
+        "computeCapability": "8.0",
+        "memorySizeGb": 40,
+        "memoryBandwidthGbPerSec": 1555,
+        "quantizationLevels": {
+            "supportedTypes": [
+                "fp32",
+                "fp64",
+                "INT8",
+                "bfloat16",
+                "TensorFloat-32 (TF32)"
+            ],
+            "optimalType": "TensorFloat-32 (TF32)"
+        }
     }
 }

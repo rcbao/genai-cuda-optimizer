@@ -8,10 +8,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wdth,wght@62.5..100,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wdth,wght@62.5..100,100..900&display=swap"
+    rel="stylesheet">
   <meta charset="utf-8" />
   {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'api/style.css' %}">
@@ -19,30 +21,18 @@
 
 <body>
   <div>
-    <a class="btn custom-btn"
-    id="settings-btn"
-    data-bs-toggle="collapse" 
-    href="#settings-box" 
-    role="button" 
-    aria-expanded="false" 
-    aria-controls="settings-box"
-  >
-   Settings
-  </a>
+    <a class="btn custom-btn" id="settings-btn" data-bs-toggle="collapse" href="#settings-box" role="button"
+      aria-expanded="false" aria-controls="settings-box">
+      Settings
+    </a>
     <form class="row form-row" action="{% url 'optimize_code' %}" method="post">
       {% csrf_token %}
       <div class="collapse collapse-horizontal" id="settings-box">
         <div class="container">
           <div class="row">
-            <a class="btn custom-btn"
-            id="close-btn"
-            data-bs-toggle="collapse" 
-            href="#settings-box" 
-            role="button" 
-            aria-expanded="false" 
-            aria-controls="settings-box"
-            >
-            x
+            <a class="btn custom-btn" id="close-btn" data-bs-toggle="collapse" href="#settings-box" role="button"
+              aria-expanded="false" aria-controls="settings-box">
+              x
             </a>
           </div>
           <div class="row">
@@ -62,6 +52,7 @@
                   <option id="gpu" value="TitanX"> Titan X </option>
                   <option id="gpu" value="RTX2028Ti"> RTX 2880 Ti </option>
                   <option id="gpu" value="RTX4000"> RTX4000 </option>
+                  <option id="gpu" value="A100"> A100 </option>
                 </select>
               </div>
             </div>
@@ -93,22 +84,22 @@
           </div>
         </div>
       </div>
-        <div class="col" id="code-submit-box">
-          <div class="row" id="code-box" >
-            <textarea class="form-control" name="original_code" id="original_code" value="{{ original_code.text }}"
-              placeholder="insert code here" rows="15"></textarea>
-          </div>
-          <div class="d-flex justify-content-center align-items-end" id="submit-div">
-            <input id="submit_btn" class="align-text-bottom btn custom-btn" id="submit_btn" type="submit" value="Optimize"
-            />
-          </div>
+      <div class="col" id="code-submit-box">
+        <div class="row" id="code-box">
+          <textarea class="form-control" name="original_code" id="original_code" value="{{ original_code.text }}"
+            placeholder="insert code here" rows="15"></textarea>
         </div>
-      </form>
-      <div class="loading-screen">
-        <div class="spinner"></div>
+        <div class="d-flex justify-content-center align-items-end" id="submit-div">
+          <input id="submit_btn" class="align-text-bottom btn custom-btn" id="submit_btn" type="submit"
+            value="Optimize" />
+        </div>
       </div>
+    </form>
+    <div class="loading-screen">
+      <div class="spinner"></div>
     </div>
-    <!-- <footer class="bg-light text-center fixed-bottom pt-1">
+  </div>
+  <!-- <footer class="bg-light text-center fixed-bottom pt-1">
       <div class="container">
           <p class="mb-0">CUDA Optimizer</p>
           <p class="text-muted">Candace, Kaylee, and Robert</p>
@@ -116,19 +107,19 @@
     </footer> -->
 </body>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
 
-    $("#submit_btn").click(function(){
+    $("#submit_btn").click(function () {
       $(".loading-screen").fadeIn();
     });
-    
-    $("#settings-btn").click(function(){
+
+    $("#settings-btn").click(function () {
       $("#code-submit-box").css("margin", "1ex 0");
       $(this).css("display", "none");
-    })  
+    })
 
-    $("#close-btn").click(function(){
-      $("#settings-btn").css("display","");
+    $("#close-btn").click(function () {
+      $("#settings-btn").css("display", "");
       $("#code-submit-box").css("margin", "1ex 2ex");
     })
   });
